@@ -41,13 +41,6 @@ func ConvertCurrency(inputs []decimal.Decimal) ([]string, error) {
 		for i, r := range s {
 			numStr := string(r)
 
-			if numStr == ZERO {
-				previosNum = numStr
-				idx++
-
-				continue
-			}
-
 			if numStr == DOT {
 				idxTotal = 1
 				data = append(data, BATH)
@@ -67,7 +60,7 @@ func ConvertCurrency(inputs []decimal.Decimal) ([]string, error) {
 			}
 
 			numTh := mapThaiNumber(numStr, idx, idxTotal, isInitNum, isPreviosZero)
-			unit := mapThaiUnit(idxTotal - idx)
+			unit := mapThaiUnit(idxTotal-idx, numStr)
 
 			data = append(data, fmt.Sprintf("%s%s", numTh, unit))
 
@@ -108,7 +101,6 @@ func mapThaiNumber(
 	}
 
 	thaiNumberMap := map[string]string{
-		ZERO:  "ศูนย์",
 		ONE:   "หนึ่ง",
 		TWO:   "สอง",
 		THREE: "สาม",
@@ -123,7 +115,7 @@ func mapThaiNumber(
 	return thaiNumberMap[v]
 }
 
-func mapThaiUnit(idx int) string {
+func mapThaiUnit(idx int, v string) string {
 	var result string
 
 	isMillion := idx >= 6
@@ -131,21 +123,23 @@ func mapThaiUnit(idx int) string {
 		idx = idx % 6
 	}
 
-	switch idx {
-	case 1:
-		result = "สิบ"
-	case 2:
-		result = "ร้อย"
-	case 3:
-		result = "พัน"
-	case 4:
-		result = "หมื่น"
-	case 5:
-		result = "แสน"
+	if v != ZERO {
+		switch idx {
+		case 1:
+			result = "สิบ"
+		case 2:
+			result = "ร้อย"
+		case 3:
+			result = "พัน"
+		case 4:
+			result = "หมื่น"
+		case 5:
+			result = "แสน"
+		}
 	}
 
 	if isMillion && idx == 0 {
-		result = result + "ล้าน"
+		result = fmt.Sprintf("%sล้าน", result)
 	}
 
 	return result

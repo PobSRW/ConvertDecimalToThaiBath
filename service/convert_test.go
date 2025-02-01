@@ -57,6 +57,16 @@ func TestConvertCurrency(t *testing.T) {
 			},
 		},
 		{
+			name: "20,000,000,000,000",
+			given: given{
+				inputs: []decimal.Decimal{decimal.NewFromFloat(20000000000000)},
+			},
+			expect: expect{
+				response: []string{"ยี่สิบล้านล้านบาทถ้วน"},
+				err:      nil,
+			},
+		},
+		{
 			name: "321,132,521.2",
 			given: given{
 				inputs: []decimal.Decimal{decimal.NewFromFloat(321132521.2)},
